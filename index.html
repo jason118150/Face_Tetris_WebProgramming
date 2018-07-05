@@ -1,0 +1,379 @@
+<!--
+Copyright 2018 Google LLC. All Rights Reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+==============================================================================
+-->
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <title>Webcam Pacman</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.cyan-teal.min.css" />
+  <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" rel="stylesheet">
+  <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+  <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="./tetris.css">
+</head>
+<body>
+  <div id="no-webcam">
+      No webcam found. <br/>
+      To use this demo, use a device with a webcam.
+    </div>
+  <!-- Top -->
+  <div id="pacman-container" class="invisible">
+    <div id="logo">
+      <div id="logo-l">
+        <div id="logo-b">
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="pacman-container">
+    <div id="manual">
+      <p>← 向左</p>
+      <p>↑ 變換</p>
+      <p>→ 向右</p>
+      <p>↓ 向下</p>
+      <div id="score-box">
+        得分:
+        <br>
+        <span id="score">0</span>
+      </div>
+      <a href="javascript:;" class="btn"
+        onclick="tetris.pause()"
+        ontouchstart="tetris.pause()">暫停</a>
+      <a href="javascript:;" class="btn"
+        onclick="tetris.start(); rmCls(stage, 'pause')"
+        ontouchstart="tetris.start(); rmCls(stage, 'pause')">繼續</a>
+      <br/>
+      <a href="javascript:;" class="btn"
+        onclick="tetris.restart(); stage.className='stage';">重新開始</a>
+      <div id="next"> </div>
+    </div>
+    <div id="stage" class="stage"><div></div></div>
+    <div id="manipulate">
+      <div class="left"></div>
+      <div class="right"></div>
+      <div class="up"></div>
+      <div class="down"></div>
+      <div class="fall">瞬間移動</div>
+    </div>
+
+
+    <div id="status">Loading mobilenet...</div>
+
+    <div class="controller-panels" id="controller" style="display:none">
+
+      <div class="panel training-panel">
+
+        <!-- Big buttons. -->
+        <div class="panel-row big-buttons">
+          <button id="train">
+            <img width="66" height="66" src="./images/button.svg" />
+            <span id="train-status">TRAIN MODEL</span>
+          </button>
+
+          <button id="predict">
+            <img width="66" height="66" src="./images/button.svg" />
+            <a href="javascript:;"
+                onclick="tetris.start(); rmCls(stage, 'pause')"><span>Play</span></a>
+            <!-- <span>PLAY</span> -->
+          </button>
+        </div><!-- /.panel-row -->
+
+        <div class="panel-row params-webcam-row">
+
+          <!-- Hyper params. -->
+          <div class="hyper-params">
+
+            <!-- Learning rate -->
+            <div class="dropdown">
+              <label>Learning rate</label>
+              <div class="select">
+                <select id="learningRate">
+                  <option value="0.00001">0.00001</option>
+                  <option selected value="0.0001">0.0001</option>
+                  <option value="0.01">0.001</option>
+                  <option value="0.03">0.003</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Batch size -->
+            <div class="dropdown">
+              <label>Batch size</label>
+              <div class="select">
+                <select id="batchSizeFraction">
+                  <option value="0.05">0.05</option>
+                  <option value="0.1">0.1</option>
+                  <option selected value="0.4">0.4</option>
+                  <option value="1">1</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Epochs -->
+            <div class="dropdown">
+              <label>Epochs</label>
+              <div class="select">
+                <select id="epochs">
+                  <option value="10">10</option>
+                  <option selected value="20">20</option>
+                  <option value="40">40</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Hidden units -->
+            <div class="dropdown">
+              <label>Hidden units</label>
+              <div class="select">
+                <select id="dense-units">
+                  <option value="10">10</option>
+                  <option selected value="100">100</option>
+                  <option value="200">200</option>
+                </select>
+              </div>
+            </div>
+
+          </div><!-- /.hyper-params -->
+
+          <div class="webcam-box-outer">
+            <div class="webcam-box-inner">
+              <video autoplay playsinline muted id="webcam" width="224" height="224"></video>
+            </div>
+          </div>
+
+        </div><!-- /.panel-row -->
+
+      </div><!-- /.panel -->
+
+      <div class="panel joystick-panel">
+
+        <div class="panel-row panel-row-top">
+
+          <div class="panel-cell panel-cell-left panel-cell-fill">
+            <p class="help-text">
+            Click to add the <br/>
+            current camera <br/>
+            view as an example <br/>
+            for that control
+            </p>
+          </div><!-- ./panel-cell -->
+
+          <div class="panel-cell panel-cell-center">
+            <div class="thumb-box">
+              <div class="thumb-box-outer">
+                <div class="thumb-box-inner">
+                  <canvas class="thumb" width=224 height=224 id="up-thumb"></canvas>
+                </div>
+                <button class="record-button" id="up"/><span>Add Sample</span></button>
+              </div>
+              <p>
+                <span id="up-total">0</span> examples
+              </p>
+            </div>
+          </div><!-- ./panel-cell -->
+
+          <div class="panel-cell panel-cell-right panel-cell-fill">
+          </div><!-- ./panel-cell -->
+
+        </div><!-- /.panel-row -->
+        <div class="panel-row panel-row-middle">
+          <div class="panel-cell panel-cell-left">
+            <div class="thumb-box">
+              <div class="thumb-box-outer">
+                <div class="thumb-box-inner">
+                  <canvas class="thumb" width=224 height=224 id="left-thumb"></canvas>
+                </div>
+                <button class="record-button" id="left"/><span>Add Sample</span></button>
+              </div>
+              <p>
+                <span id="left-total">0</span> examples
+              </p>
+            </div>
+          </div><!-- ./panel-cell -->
+
+          <div class="panel-cell panel-cell-center panel-cell-fill">
+            <img height="108" width="129" src="./images/joystick.png" />
+          </div><!-- ./panel-cell -->
+
+          <div class="panel-cell panel-cell-right">
+            <div class="thumb-box">
+              <div class="thumb-box-outer">
+                <div class="thumb-box-inner">
+                  <canvas class="thumb" width=224 height=224 id="right-thumb"></canvas>
+                </div>
+                <button class="record-button" id="right"/><span>Add Sample</span></button>
+              </div>
+              <p>
+                <span id="right-total">0</span> examples
+              </p>
+            </div>
+          </div><!-- ./panel-cell -->
+
+        </div><!-- /.panel-row -->
+
+        <div class="panel-row panel-row-bottom">
+
+          <div class="panel-cell panel-cell-left panel-cell-fill">
+          </div><!-- ./panel-cell -->
+
+          <div class="panel-cell panel-cell-center">
+            <div class="thumb-box">
+              <div class="thumb-box-outer">
+                <div class="thumb-box-inner">
+                  <canvas class="thumb" width=224 height=224 id="down-thumb"></canvas>
+                </div>
+                <button class="record-button" id="down"/><span>Add Sample</span></button>
+              </div>
+              <p>
+                <span id="down-total">0</span> examples
+              </p>
+            </div>
+          </div><!-- ./panel-cell -->
+
+          <div class="panel-cell panel-cell-right panel-cell-fill">
+          </div><!-- ./panel-cell -->
+
+        </div><!-- /.panel-row -->
+
+
+      </div><!-- /.panel -->
+
+    </div><!-- /#controller -->
+  </div>
+
+
+  <p id="copyright">PAC-MAN&trade; &copy; BANDAI NAMCO Entertainment Inc.</p>
+
+  <script src="https://storage.googleapis.com/tfjs-examples/assets/webcam-transfer-learning/pacman-google.js"></script>
+  <script>
+    document.addEventListener('gesturestart', function (e) {
+      e.preventDefault();
+    })
+    document.addEventListener('touchend', function(e) {
+      e.preventDefault();
+    })
+    function addCls(e, cls) {
+      rmCls(e, cls);
+      e.className += ' ' + cls;
+    }
+    function rmCls(e, cls) {
+      if(e.className && cls) {
+        e.className = e.className.split(/\s+/).filter(function(c) {
+          return c && c !== cls;
+        }).join(' ');
+      }
+    }
+  </script>
+  <script src="./tetris.js"></script>
+  <script>
+    var w, h;
+    w = 15;
+    h = 25;
+    var score = document.getElementById('score');
+    var stage = document.getElementById('stage');
+    var next = document.getElementById('next');
+    var d = stage.getElementsByTagName('div')[0].offsetWidth;
+    stage.style.width = w*d + 'px';
+    stage.style.height = h*d + 'px';
+    next.style.width = 4*d + 'px';
+    next.style.height = 4*d + 'px';
+    var tetris = new Tetris(w, h, 800).on('score', function(a, b) {
+      score.innerHTML = +score.innerHTML + b*b*10 ;
+    })
+    .on('lose', function() {
+      addCls(stage, 'gameover');
+    })
+    .on('pause', function() {
+      addCls(stage, 'pause');
+    })
+    .on('start', function(nextTile) {
+      next.innerHTML = nextTile.join('').replace(/0/g, '<div></div>').replace(/1/g, '<div class="on"></div>');
+    })
+    .on('render', function(res) {
+      stage.innerHTML = res.join('').replace(/0/g, '<div></div>').replace(/1/g, '<div class="on"></div>')
+    })
+    .start();
+
+    tetris.pause();
+  </script>
+  <script src="index.js"></script>
+  <!--
+  <script>
+
+    // var interval = (function() {
+    //   var startTime, timer, interval, cb;
+    //   return {
+    //     run: function(fn, t) {
+    //       cb = fn;
+    //       interval = t || 100;
+    //       startTime = Date.now();
+    //       timer = setInterval(function() {
+    //         fn && fn();
+    //       }, interval);
+    //     },
+    //     stop: function() {
+    //       timer && clearInterval(timer);
+    //       if(Date.now() - startTime < interval) {
+    //         cb && cb();
+    //       }
+    //     }
+    //   }
+    // })();
+    var btn;
+    var slice = [].slice;
+    var btns = slice.call(document.getElementById('manipulate').getElementsByTagName('div'));
+    btns.forEach(function(btn) {
+      btn.addEventListener('touchstart', function(e) {
+        var cls = this.className;
+        addCls(this, 'active')
+        switch(cls) {
+          case 'left':
+            return interval.run(function() {
+              tetris.left();
+            })
+          case 'right':
+            return interval.run(function() {
+              tetris.right();
+            })
+          case 'up':
+            return interval.run(function() {
+              tetris.rotate();
+            })
+          case 'down':
+            return interval.run(function() {
+              tetris.down();
+            }, 70)
+          case 'fall':
+            tetris.fall();
+        }
+      });
+
+
+      btn.addEventListener('touchend', function(e) {
+        rmCls(this, 'active')
+        interval.stop();
+      })
+    })
+  </script> -->
+
+
+
+
+
+
+</body>
+</html>

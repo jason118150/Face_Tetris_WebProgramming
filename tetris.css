@@ -1,0 +1,342 @@
+
+* {
+}
+
+html {
+	overflow: hidden;
+}
+body {
+	padding:  0;
+	margin: 0;
+	font-family: arial,verdana,microsoft yahei;
+	color: #777;
+	background: #eee;
+	-webkit-touch-callout: none !important;
+	-webkit-user-select: none !important;
+}
+
+#main {
+	width: 40%;
+}
+#main:after {
+	content: ' ';
+	display: flex;
+	height: 0;
+	clear: both;
+}
+
+.stage {
+	/*width: 300px;
+	height: 500px;*/
+	margin: 10px 10px;
+	border: 2px solid #444;
+	position: relative;
+	float: left;
+	background: #a1ad87;
+}
+
+.stage.gameover:after {
+	content: '遊戲結束!';
+	position: absolute;
+	top: 50%;
+	left: 0;
+	right: 0;
+	line-height: 40px;
+	margin-top: -20px;
+	font-size: 20px;
+	color: #444;
+	text-align: center;
+	z-index: 1;
+}
+
+.stage div, #next div {
+	width: 20px;
+	height: 20px;
+	float: left;
+	position: relative;
+	/*border: 1px solid #fff;*/
+	box-sizing: border-box;
+}
+
+.stage div:before {
+	content: ' ';
+	position: absolute;
+	border: 2px solid #99a581;
+	left: 1px;
+	top: 1px;
+	right: 1px;
+	bottom: 1px;
+}
+
+.stage div:after {
+	content: ' ';
+	position: absolute;
+	background: #99a581;
+	left: 4px;
+	top: 4px;
+	right: 4px;
+	bottom: 4px;
+}
+
+.stage div.on:before {
+	/*background-color: #6cf;*/
+	border: 2px solid #444;
+}
+
+.stage div.on:after{
+	/*background-color: #6cf;*/
+	background: #444;
+}
+
+.stage.pause div.on {
+	/*background-color: #e0e0e0;*/
+}
+
+#next {
+	/*float: left;*/
+	margin: 20px auto;
+	position: relative;
+	/*border: 1px dashed #aaa;*/
+}
+
+#next div.on:before {
+	content: ' ';
+	position: absolute;
+	border: 2px solid #444;
+	left: 1px;
+	top: 1px;
+	right: 1px;
+	bottom: 1px;
+}
+#next div.on:after {
+	content: ' ';
+	position: absolute;
+	background: #444;
+	left: 4px;
+	top: 4px;
+	right: 4px;
+	bottom: 4px;
+}
+
+#manual {
+	width: 140px;
+	float: left;
+	margin-left: 100px;
+	margin-top: 10px;
+	border: 2px solid #666;
+	background: #a1ad87;
+	color: #444;
+	font-family: arial, verdana, microsoft yahei;
+	text-align: center;
+	font-size: 12px;
+}
+
+#score-box {
+	line-height: 1.5;
+	margin: 10px;
+	background: #444;
+	color: #fff;
+	font-size: 12px;
+	border-radius: 2px;
+	/*height: 30px;*/
+	/*line-height: 30px;*/
+}
+
+#score-box span {
+	color: #eee;
+}
+
+#manipulate {
+	width: 100%;
+	height: 160px;
+	float: left;
+	position: relative;
+	/*border-top: 1px solid #666;*/
+	display: none;
+}
+
+#manipulate div{
+	border-radius: 100%;
+	background: #eac31b;
+	text-align: center;
+	color: #eee;
+	position: absolute;
+	border: 1px solid #999;
+}
+.left, .right, .up, .down {
+	width: 55px;
+	height: 55px;
+}
+
+.fall {
+	width: 80px;
+	height: 80px;
+	top: 35px;
+	line-height:80px;
+	font-size: 12px;
+}
+#manipulate div.active {
+	box-shadow: 0 0 10px #666 inset;
+}
+
+.left {
+	right: 100px;
+	top: 45px;
+}
+
+.right {
+	right: 10px;
+	top: 45px;
+}
+
+.up {
+	right: 55px;
+	top: 0px;
+}
+.down {
+	right: 55px;
+	top: 90px;
+}
+
+.left:after, .right:after, .up:after, .down:after {
+	content: ' ';
+	width: 0;
+	height: 0;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+}
+
+.left:after {
+	border-right: 8px solid #eee;
+	border-top: 8px solid transparent;
+	border-bottom: 8px solid transparent;
+	margin-left: -5px;
+	margin-top: -8px;
+}
+.right:after {
+	border-left: 8px solid #eee;
+	border-top: 8px solid transparent;
+	border-bottom: 8px solid transparent;
+	margin-left: -2px;
+	margin-top: -8px;
+}
+.up:after {
+	border-bottom: 8px solid #eee;
+	border-left: 8px solid transparent;
+	border-right: 8px solid transparent;
+	margin-left: -8px;
+	margin-top: -6px;
+}
+
+.down:after {
+	border-top: 8px solid #eee;
+	border-left: 8px solid transparent;
+	border-right: 8px solid transparent;
+	margin-left: -8px;
+	margin-top: -2px;
+}
+
+
+
+
+.btn {
+	padding: 5px;
+	color: #777 !important;
+	position: relative;
+	text-decoration: none;
+	transition: all .2s ease;
+	border-radius: 5px;
+	background: #777;
+	color: #fff !important;
+	line-height: 30px;
+	font-size: 12px;
+}
+
+.btn:hover {
+	background: #666;
+}
+
+
+
+a {
+	color: #666;
+	font-size: 13px;
+}
+
+p {
+	margin: 10px auto;
+}
+
+
+.mlpart {
+	width: 700px;
+	height: 700px;
+	float: left;
+}
+.sensor {
+	margin-top: 170px;
+	margin-left: 100px;
+	width: 180px;
+	height: 180px;
+	border: 1px solid black;
+	float: left;
+}
+.trainingpart {
+	float: right;
+	width: 300px;
+}
+.stopleft {
+	border: 1px solid black;
+	width: 84px;
+	height: 87px;
+	position: absolute;
+	top: 100px;
+}
+.stopright {
+	border: 1px solid black;
+	width: 84px;
+	height: 87px;
+	position: absolute;
+	left: 600px;
+	top: 100px;
+}
+.sleft {
+	border: 1px solid black;
+	width: 84px;
+	height: 87px;
+	position: absolute;
+	top: 220px;
+
+}
+.sright {
+	border: 1px solid black;
+	width: 84px;
+	height: 87px;
+	position: absolute;
+	top: 220px;
+	left: 600px;
+
+}
+.sdown {
+	border: 1px solid black;
+	width: 84px;
+	height: 87px;
+	position: absolute;
+	left: 500px;
+	top: 340px;
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
